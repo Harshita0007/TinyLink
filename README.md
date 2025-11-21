@@ -132,7 +132,7 @@ Content-Type: application/json
 
 {
   "target_url": "https://example.com/very-long-url",
-  "code": "mycode"  // optional, 6-8 alphanumeric chars
+  "code": "mycode"  
 }
 ```
 
@@ -197,7 +197,7 @@ DELETE /api/links/:code
 ```json
 {
   "message": "Link deleted successfully",
-  "link": { /* deleted link object */ }
+  "link": 
 }
 ```
 
@@ -210,7 +210,7 @@ GET /:code
 
 **Error (404)**: "Link not found"
 
-## 🎨 Features Walkthrough
+##  Features Walkthrough
 
 ### 1. Create a Short Link
 
@@ -238,7 +238,7 @@ Use the search bar to filter links by:
 
 Click the "Delete" button to permanently remove a link. The short code will return 404 after deletion.
 
-## 🔒 Security Features
+##  Security Features
 
 - **Input Validation** - All inputs validated on client and server
 - **XSS Prevention** - HTML escaping on client-side rendering
@@ -246,7 +246,7 @@ Click the "Delete" button to permanently remove a link. The short code will retu
 - **CORS Enabled** - Configured for secure cross-origin requests
 - **SSL/TLS** - Database connections use SSL
 
-## 🧪 Testing
+##  Testing
 
 ### Manual Testing Checklist
 
@@ -279,7 +279,7 @@ curl http://localhost:3000/api/links
 curl -L http://localhost:3000/test01
 ```
 
-## 📊 Database Schema
+## Database Schema
 
 ```sql
 CREATE TABLE links (
@@ -294,7 +294,7 @@ CREATE TABLE links (
 CREATE INDEX idx_links_code ON links(code);
 ```
 
-## 🌍 Deployment
+##  Deployment
 
 ### Deploy to Render
 
@@ -330,7 +330,7 @@ NODE_ENV=production
 4. Set environment variables
 5. Deploy automatically
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Database Connection Issues
 
@@ -366,7 +366,7 @@ PORT=3001
 - Verify `npm install` works locally
 - Check Render build logs for specific errors
 
-## 📈 Performance
+##  Performance
 
 - **Average Response Time**: < 50ms
 - **Database Query Time**: < 10ms
