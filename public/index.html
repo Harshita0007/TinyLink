@@ -15,44 +15,60 @@
             <p>URL Shortener Dashboard</p>
         </div>
     </header>
+
     <main class="container">
+        <!-- Create link -->
         <section class="add-link-section">
             <h2>Create Short Link</h2>
             <form id="addLinkForm">
                 <div class="form-group">
                     <label for="targetUrl">Target URL *</label>
                     <input type="url" id="targetUrl" name="targetUrl" placeholder="https://example.com/your-long-url"
-                        required>
+                        required />
                     <span class="error-message" id="urlError"></span>
                 </div>
+
                 <div class="form-group">
                     <label for="customCode">Custom Code (optional)</label>
                     <input type="text" id="customCode" name="customCode"
-                        placeholder="mycode (6-8 characters, a-z, A-Z, 0-9)" pattern="[A-Za-z0-9]{6,8}" maxlength="8">
+                        placeholder="mycode (6-8 characters, a-z, A-Z, 0-9)" pattern="[A-Za-z0-9]{6,8}" maxlength="8" />
                     <span class="error-message" id="codeError"></span>
                     <small>Leave empty to auto-generate</small>
                 </div>
-                <button type="submit" id="submitBtn" class="btn btn-primary">Create Short Link</button>
+
+                <button type="submit" id="submitBtn" class="btn btn-primary">
+                    Create Short Link
+                </button>
             </form>
+
             <div id="successMessage" class="success-message" style="display: none;">
                 <p>✓ Link created successfully!</p>
                 <div class="short-url-display">
-                    <input type="text" id="shortUrlDisplay" readonly>
+                    <input type="text" id="shortUrlDisplay" readonly />
                     <button onclick="copyShortUrl()" class="btn btn-secondary">Copy</button>
                 </div>
             </div>
         </section>
-        <section class="filter-section">
-            <h2>Your Links</h2>
-            <input type="text" id="searchInput" placeholder="Search by code or URL..." class="search-input">
-        </section>
+
+        <!-- Links + search -->
         <section class="links-section">
+            <div class="section-header">
+                <h2>Your Links</h2>
+
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search by code or URL..." class="search-input" />
+                </div>
+            </div>
+
             <div id="loadingState" class="loading-state">
                 <p>Loading links...</p>
             </div>
+
             <div id="emptyState" class="empty-state" style="display: none;">
                 <p>No links yet. Create your first short link above!</p>
             </div>
+
             <div id="tableContainer" style="display: none;">
                 <div class="table-responsive">
                     <table id="linksTable">
@@ -72,11 +88,13 @@
             </div>
         </section>
     </main>
+
     <footer>
         <div class="container">
             <p>&copy; 2025 TinyLink | <a href="/healthz" target="_blank">Health Check</a></p>
         </div>
     </footer>
+
     <script src="dashboard.js"></script>
 </body>
 
