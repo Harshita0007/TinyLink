@@ -4,8 +4,8 @@ Hey! This is TinyLink - a simple URL shortener I built. Think bit.ly, but simple
 
 ## 🌐 Live Demo
 
-**Website**: [Add your deployed link here]  
-**Try it**: Go to the link above and shorten a URL!
+
+[🔗 View Live Deployment](https://tiny-link-mu.vercel.app/)
 
 ## What Does It Do?
 
