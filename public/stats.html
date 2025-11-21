@@ -5,72 +5,688 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Link Statistics - TinyLink</title>
-    <link rel="stylesheet" href="/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-900: #111827;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 24px 32px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .back-link {
+            margin-bottom: 20px;
+        }
+
+        .back-link a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .back-link a:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Test Link Banner */
+        .test-banner {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-banner h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .test-banner p {
+            font-size: 14px;
+            opacity: 0.95;
+            margin-bottom: 12px;
+        }
+
+        .test-link-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .test-link-box input {
+            flex: 1;
+            background: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+            color: var(--gray-900);
+        }
+
+        .test-link-box button {
+            padding: 10px 20px;
+            background: white;
+            color: var(--success);
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .test-link-box button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .stats-card h2 {
+            font-size: 20px;
+            color: var(--gray-900);
+        }
+
+        .auto-refresh-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gray-100);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .auto-refresh-badge.active {
+            background: #d1fae5;
+            color: var(--success);
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-item {
+            background: var(--gray-50);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--gray-200);
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .stat-item.updated {
+            animation: highlight 1s ease;
+        }
+
+        @keyframes highlight {
+
+            0%,
+            100% {
+                background: var(--gray-50);
+            }
+
+            50% {
+                background: #fef3c7;
+                border-color: var(--warning);
+            }
+        }
+
+        .stat-item label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray-900);
+            word-break: break-all;
+        }
+
+        .stat-large {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-url a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .stat-url a:hover {
+            text-decoration: underline;
+        }
+
+        .short-url-display {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .short-url-display input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+            background: white;
+        }
+
+        .short-url-display input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--gray-600);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-700);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .stats-actions {
+            display: flex;
+            gap: 12px;
+            padding-top: 24px;
+            border-top: 2px solid var(--gray-100);
+            flex-wrap: wrap;
+        }
+
+        .loading-state,
+        .error-state {
+            background: white;
+            border-radius: 12px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading-state p {
+            color: var(--gray-600);
+            font-size: 16px;
+        }
+
+        .error-state {
+            color: var(--danger);
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 32px;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .stats-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .short-url-display,
+            .test-link-box {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <header>
-        <div class="container">
+    <div class="container">
+        <header>
             <h1>🔗 TinyLink</h1>
             <p>Link Statistics</p>
+        </header>
+
+        <div class="back-link">
+            <a href="/">← Back to Dashboard</a>
         </div>
-    </header>
-    <main class="container">
-        <div class="back-link"><a href="/">← Back to Dashboard</a></div>
+
+        <!-- Test Link Banner -->
+        <div class="test-banner" id="testBanner" style="display: none;">
+            <h3>🧪 Test Your Short Link</h3>
+            <p>Click the button below to test your short link and see the click counter update in real-time!</p>
+            <div class="test-link-box">
+                <input type="text" id="testUrl" readonly>
+                <button onclick="testLink()">🚀 Test Link</button>
+                <button onclick="copyUrl()" style="background: rgba(255,255,255,0.3); color: white;">📋 Copy</button>
+            </div>
+        </div>
+
         <div id="loadingState" class="loading-state">
             <p>Loading statistics...</p>
         </div>
+
         <div id="errorState" class="error-state" style="display: none;">
             <p id="errorMessage">Link not found</p>
+            <br>
             <a href="/" class="btn btn-primary">Go to Dashboard</a>
         </div>
+
         <div id="statsContainer" style="display: none;">
-            <section class="stats-card">
-                <h2>Link Details</h2>
+            <div class="stats-card">
+                <div class="stats-header">
+                    <h2>Link Details</h2>
+                    <div class="auto-refresh-badge" id="autoRefreshBadge">
+                        <span class="pulse"></span>
+                        Auto-refresh enabled
+                    </div>
+                </div>
+
                 <div class="stats-grid">
                     <div class="stat-item">
                         <label>Short Code</label>
-                        <div class="stat-value" id="statCode"></div>
+                        <div class="stat-value" id="statCode" style="font-family: monospace;">-</div>
                     </div>
-                    <div class="stat-item">
+
+                    <div class="stat-item" style="grid-column: 1 / -1;">
                         <label>Short URL</label>
                         <div class="short-url-display">
                             <input type="text" id="shortUrl" readonly>
-                            <button onclick="copyUrl()" class="btn btn-secondary">Copy</button>
+                            <button onclick="copyUrl()" class="btn btn-secondary">📋 Copy</button>
                         </div>
                     </div>
-                    <div class="stat-item full-width">
+
+                    <div class="stat-item" style="grid-column: 1 / -1;">
                         <label>Target URL</label>
                         <div class="stat-value stat-url">
-                            <a id="targetUrl" href="" target="_blank"></a>
+                            <a id="targetUrl" href="" target="_blank">-</a>
                         </div>
                     </div>
-                    <div class="stat-item">
+
+                    <div class="stat-item" id="clicksItem">
                         <label>Total Clicks</label>
                         <div class="stat-value stat-large" id="statClicks">0</div>
                     </div>
-                    <div class="stat-item">
+
+                    <div class="stat-item" id="lastClickedItem">
                         <label>Last Clicked</label>
                         <div class="stat-value" id="statLastClicked">Never</div>
                     </div>
+
                     <div class="stat-item">
                         <label>Created</label>
-                        <div class="stat-value" id="statCreated"></div>
+                        <div class="stat-value" id="statCreated">-</div>
                     </div>
                 </div>
+
                 <div class="stats-actions">
-                    <button onclick="deleteLink()" class="btn btn-danger">Delete Link</button>
-                    <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+                    <button onclick="refreshStats()" class="btn btn-primary">🔄 Refresh Now</button>
+                    <button onclick="toggleAutoRefresh()" class="btn btn-secondary" id="autoRefreshBtn">⏸️ Pause
+                        Auto-Refresh</button>
+                    <button onclick="deleteLink()" class="btn btn-danger">🗑️ Delete Link</button>
+                    <a href="/" class="btn btn-secondary">← Dashboard</a>
                 </div>
-            </section>
+            </div>
         </div>
-    </main>
-    <footer>
-        <div class="container">
+
+        <footer>
             <p>&copy; 2025 TinyLink | <a href="/healthz" target="_blank">Health Check</a></p>
-        </div>
-    </footer>
-    <script src="/stats.js"></script>
+        </footer>
+    </div>
+
+    <script>
+        const BASE_URL = window.location.origin;
+        let currentLink = null;
+        let autoRefreshInterval = null;
+        let previousClicks = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const code = getCodeFromPath();
+            if (code) {
+                loadLinkStats(code);
+                startAutoRefresh();
+            } else {
+                showError('Invalid link code');
+            }
+        });
+
+        function getCodeFromPath() {
+            const pathParts = window.location.pathname.split('/');
+            return pathParts[pathParts.length - 1];
+        }
+
+        function startAutoRefresh() {
+            autoRefreshInterval = setInterval(() => {
+                const code = getCodeFromPath();
+                loadLinkStats(code, true); // silent refresh
+            }, 5000); // refresh every 5 seconds
+        }
+
+        function toggleAutoRefresh() {
+            const btn = document.getElementById('autoRefreshBtn');
+            const badge = document.getElementById('autoRefreshBadge');
+
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                btn.textContent = '▶️ Resume Auto-Refresh';
+                badge.classList.remove('active');
+            } else {
+                startAutoRefresh();
+                btn.textContent = '⏸️ Pause Auto-Refresh';
+                badge.classList.add('active');
+            }
+        }
+
+        async function loadLinkStats(code, silent = false) {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+            const statsContainer = document.getElementById('statsContainer');
+
+            if (!silent) {
+                loadingState.style.display = 'block';
+                errorState.style.display = 'none';
+                statsContainer.style.display = 'none';
+            }
+
+            try {
+                const response = await fetch(`/api/links/${code}`);
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showError('Link not found');
+                    } else {
+                        showError('Failed to load link statistics');
+                    }
+                    return;
+                }
+
+                const link = await response.json();
+                currentLink = link;
+
+                if (!silent) {
+                    loadingState.style.display = 'none';
+                    statsContainer.style.display = 'block';
+                    document.getElementById('testBanner').style.display = 'block';
+                }
+
+                renderStats(link);
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                if (!silent) {
+                    showError('Network error. Please try again.');
+                }
+            }
+        }
+
+        function renderStats(link) {
+            const shortUrl = `${BASE_URL}/${link.code}`;
+
+            document.getElementById('statCode').textContent = link.code;
+            document.getElementById('shortUrl').value = shortUrl;
+            document.getElementById('testUrl').value = shortUrl;
+
+            const targetUrlEl = document.getElementById('targetUrl');
+            targetUrlEl.href = link.target_url;
+            targetUrlEl.textContent = link.target_url;
+
+            const newClicks = link.clicks || 0;
+            document.getElementById('statClicks').textContent = newClicks;
+
+            // Highlight if clicks changed
+            if (previousClicks !== null && previousClicks !== newClicks) {
+                const clicksItem = document.getElementById('clicksItem');
+                clicksItem.classList.add('updated');
+                setTimeout(() => clicksItem.classList.remove('updated'), 1000);
+
+                const lastClickedItem = document.getElementById('lastClickedItem');
+                lastClickedItem.classList.add('updated');
+                setTimeout(() => lastClickedItem.classList.remove('updated'), 1000);
+            }
+            previousClicks = newClicks;
+
+            const lastClicked = link.last_clicked
+                ? formatDateTime(new Date(link.last_clicked))
+                : 'Never';
+            document.getElementById('statLastClicked').textContent = lastClicked;
+
+            const created = formatDateTime(new Date(link.created_at));
+            document.getElementById('statCreated').textContent = created;
+
+            document.title = `Stats: ${link.code} - TinyLink`;
+        }
+
+        function showError(message) {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+            const statsContainer = document.getElementById('statsContainer');
+
+            loadingState.style.display = 'none';
+            statsContainer.style.display = 'none';
+            errorState.style.display = 'block';
+
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        function testLink() {
+            if (!currentLink) return;
+            const testUrl = `${BASE_URL}/${currentLink.code}`;
+            window.open(testUrl, '_blank');
+        }
+
+        async function deleteLink() {
+            if (!currentLink) return;
+
+            const confirmMsg = `Are you sure you want to delete the link "${currentLink.code}"?\n\nThis action cannot be undone.`;
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/links/${currentLink.code}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    alert('Failed to delete link');
+                    return;
+                }
+
+                alert('Link deleted successfully');
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Error deleting link:', error);
+                alert('Network error. Please try again.');
+            }
+        }
+
+        function copyUrl() {
+            const input = document.getElementById('shortUrl');
+            input.select();
+            navigator.clipboard.writeText(input.value).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        function refreshStats() {
+            const code = getCodeFromPath();
+            loadLinkStats(code);
+        }
+
+        function formatDateTime(date) {
+            return date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // Auto-enable badge animation
+        document.getElementById('autoRefreshBadge').classList.add('active');
+    </script>
 </body>
 
 </html>
